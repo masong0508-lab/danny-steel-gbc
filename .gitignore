@@ -1,0 +1,13 @@
+*.gbc
+*.gb
+*.map
+*.noi
+*.lst
+*.rel
+*.asm
+*.sym
+*.ihx
+*.adb
+*.cdb
+*.lk
+__pycache__/

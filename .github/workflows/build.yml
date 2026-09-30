@@ -1,0 +1,36 @@
+name: Build GBC ROM
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install GBDK-2020
+        run: |
+          curl -fsSL -o gbdk.tar.gz https://github.com/gbdk-2020/gbdk-2020/releases/download/4.5.0/gbdk-linux64.tar.gz
+          tar xzf gbdk.tar.gz -C "$HOME"
+          "$HOME/gbdk/bin/lcc" --version || true
+      - name: Build
+        run: make GBDK_HOME="$HOME/gbdk"
+      - name: ROM size
+        run: ls -l danny_steel_title.gbc
+      - name: Upload ROM
+        uses: actions/upload-artifact@v4
+        with:
+          name: danny_steel_title-gbc
+          path: danny_steel_title.gbc
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: danny_steel_title.gbc
